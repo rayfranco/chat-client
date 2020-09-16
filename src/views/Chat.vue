@@ -21,10 +21,7 @@ export default {
   },
   methods: {
     onSendMessage (text) {
-      store.messages.push({
-        user: { name: 'Franco' },
-        text
-      })
+      store.messageNew(text)
     }
   },
   components: {
