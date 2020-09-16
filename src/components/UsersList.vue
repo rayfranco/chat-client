@@ -1,14 +1,13 @@
 <template>
-  <ul>
-    <UsersListUser
-      v-for="(user, i) in users"
-      :key="i"
-      :user="user"/>
-  </ul>
+  <CliCommand cmd="ls">
+    <div class="usersJoined" v-html="usersJoined"></div>
+  </CliCommand>
 </template>
 
 <script>
-import UsersListUser from './UsersListUser'
+import CliCommand from './CliCommand'
+import store from '../store'
+
 export default {
   props: {
     users: {
@@ -16,7 +15,26 @@ export default {
     }
   },
   components: {
-    UsersListUser
+    CliCommand
+  },
+  methods: {
+    isCurrentUser (username) {
+      return username === store.user.username
+    }
+  },
+  computed: {
+    usersJoined () {
+      return this.users.map((user) => {
+        return this.isCurrentUser(user.username) ? `<strong>${user.username}*</strong>` : user.username
+      }).join(', ')
+    }
   }
 }
 </script>
+
+<style lang="stylus">
+@import '../theme/color.styl'
+
+div.usersJoined strong
+  color pink
+</style>

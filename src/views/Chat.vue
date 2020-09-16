@@ -22,6 +22,9 @@ export default {
   methods: {
     onSendMessage (text) {
       store.messageNew(text)
+    },
+    onMousemove () {
+
     }
   },
   components: {

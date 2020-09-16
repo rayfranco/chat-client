@@ -1,8 +1,8 @@
 <template>
   <li>
-    <strong v-if="isCurrentUser">{{ message.user.username }}</strong>
-    <em v-else>{{ message.user.username }}</em>
-    : {{ message.text }}</li>
+    <strong v-if="isCurrentUser">~{{ message.user.username }}*</strong>
+    <em v-else>./user/{{ message.user.username }}</em>
+    <em class="yellow"> > </em> {{ message.text }}</li>
 </template>
 
 <script>
@@ -23,3 +23,11 @@ export default {
   }
 }
 </script>
+
+<style lang="stylus" scoped>
+@import '../theme/color.styl'
+strong
+  color pink
+.yellow
+  color yellow
+</style>
