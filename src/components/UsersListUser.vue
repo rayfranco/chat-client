@@ -1,5 +1,5 @@
 <template>
-  <li>{{ user.username }}</li>
+  <li><img :src="avatar">{{ user.username }}</li>
 </template>
 
 <script>
@@ -8,6 +8,9 @@ export default {
     user: {
       type: Object,
       required: true
+    },
+    avatar: {
+      type: String
     }
   }
 }

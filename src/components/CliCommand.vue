@@ -83,6 +83,11 @@ export default {
   },
   mounted () {
     this.$refs.input.focus()
+  },
+  watch: {
+    value (val) {
+      this.command = val
+    }
   }
 }
 </script>

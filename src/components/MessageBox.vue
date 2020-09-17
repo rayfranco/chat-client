@@ -1,7 +1,7 @@
 <template>
   <CliCommand
     ref="cli"
-    value="send msg "
+    :value="cliValue"
     @command="onCommand"
     @typing="onTyping">
       <p v-if="error && error.message">{{ error.message }}</p>
@@ -15,12 +15,16 @@ export default {
   data () {
     return {
       error: {},
-      selection: {}
+      selection: {},
+      cliValue: 'send msg '
     }
   },
   methods: {
     onTyping () {
       this.$emit('typing')
+    },
+    resetValue () {
+      this.cliValue = 'send msg '
     },
     // CLI Commands
     onCommand (command) {
@@ -39,12 +43,22 @@ export default {
       }
     },
     onSend (action, text) {
-      if (action === 'msg') {
-        this.$emit('sendMessage', text)
-      } else if (action === 'cmd') {
-        this.$emit('sendMessage', '/' + text)
-      } else {
-        this.onUnknownAction(action)
+      switch (action) {
+        case 'msg':
+          this.$emit('sendMessage', text)
+          console.log('reset?')
+          this.resetValue()
+          break
+        case 'cmd':
+          this.$emit('sendMessage', '/' + text)
+          this.resetValue()
+          break
+        case 'gif':
+          this.$emit('sendMessage', '/gif ' + text)
+          this.resetValue()
+          break
+        default:
+          this.onUnknownAction(action)
       }
     },
     onLogout () {

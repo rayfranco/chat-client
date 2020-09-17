@@ -38,6 +38,9 @@ export default {
       }
       store.messageNew(text)
     },
+    onSendGif (tag) {
+
+    },
     onTyping () {
       console.log('typing')
       store.userTyping()

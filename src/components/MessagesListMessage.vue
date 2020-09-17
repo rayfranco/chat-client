@@ -1,7 +1,7 @@
 <template>
   <li>
-    <strong v-if="isCurrentUser">~{{ message.user.username }}*</strong>
-    <em v-else>./user/{{ message.user.username }}</em>
+    <strong v-if="isCurrentUser" class="username" :style="{ color: color }">~{{ message.user.username }}*</strong>
+    <em v-else class="username" :style="{ color: color }">./user/{{ message.user.username }}</em>
     <em class="yellow"> > </em>
     <span v-if="message.html" v-html="message.text"></span>
     <span v-else>{{ message.text }}</span>
@@ -16,6 +16,9 @@ export default {
     isCurrentUser () {
       return this.message.user.username ===
         store.$data.user.username
+    },
+    color () {
+      return store.colors[this.message.user.username]
     }
   },
   props: {
@@ -33,4 +36,6 @@ strong
   color pink
 .yellow
   color yellow
+.username
+  color grey
 </style>

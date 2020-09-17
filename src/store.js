@@ -4,13 +4,15 @@ import router from './router'
 
 const socket = io('https://bddi-2019-chat.herokuapp.com/')
 
+const COLORS = ['#57c7ff', '#58f08a', '#ff6ac1', '#f3f99d']
 const store = new Vue({
   data: {
     isRegistered: false,
     error: null,
     user: {},
     users: [],
-    messages: []
+    messages: [],
+    colors: {}
   },
   watch: {
     isRegistered (registered) {
@@ -36,7 +38,20 @@ const store = new Vue({
         this.user = {}
       })
 
-      socket.on('users update', ({ users }) => {
+      socket.on('users update', ({ users, user, type }) => {
+        if (this.users.length > 0) {
+          // Test user
+          if (type === 'join') {
+            this.colors[user.username] = this.generateRandomColor()
+          } else {
+            delete this.colors[user.username]
+          }
+        } else {
+          users.forEach((user) => {
+            this.colors[user.username] = this.generateRandomColor()
+          })
+        }
+
         this.users = users
       })
 
@@ -66,6 +81,10 @@ const store = new Vue({
       })
     },
 
+    generateRandomColor () {
+      return COLORS[Math.floor(Math.random() * COLORS.length)]
+    },
+
     logout () {
       sessionStorage.clear()
       socket.disconnect()
@@ -90,7 +109,8 @@ const store = new Vue({
     // API calls
 
     userRegister (username) {
-      socket.emit('user register', { username })
+      const avatar = 'https://vignette.wikia.nocookie.net/jaygt/images/4/41/Hidethepainharold.png/revision/latest/scale-to-width-down/340?cb=20190714050339'
+      socket.emit('user register', { username, avatar })
     },
     userTyping () {
 

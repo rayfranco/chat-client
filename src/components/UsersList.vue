@@ -25,7 +25,9 @@ export default {
   computed: {
     usersJoined () {
       return this.users.map((user) => {
-        return this.isCurrentUser(user.username) ? `<strong>${user.username}*</strong>` : user.username
+        const color = store.colors[user.username]
+        return (user.avatar ? `<a href="${user.avatar}"><img src="${user.avatar}" height="14" width="14"></a> ` : '') +
+          (this.isCurrentUser(user.username) ? `<strong style="color: ${color}">${user.username}*</strong>` : `<span style="color: ${color}">${user.username}</span>`)
       }).join(', ')
     }
   }
