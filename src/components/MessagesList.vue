@@ -1,6 +1,9 @@
 <template>
   <div class="MessagesList">
-    <CliCommand cmd="cmd" param1="list" param2="--all">
+    <CliCommand
+      value="cmd list --all"
+      :disabled="true"
+      :quoted="false">
       <ul ref="list" @mousewheel="onScroll">
         <MessagesListMessage
           v-for="(message, i) in messages"

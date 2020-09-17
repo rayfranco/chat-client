@@ -2,7 +2,10 @@
   <li>
     <strong v-if="isCurrentUser">~{{ message.user.username }}*</strong>
     <em v-else>./user/{{ message.user.username }}</em>
-    <em class="yellow"> > </em> {{ message.text }}</li>
+    <em class="yellow"> > </em>
+    <span v-if="message.html" v-html="message.text"></span>
+    <span v-else>{{ message.text }}</span>
+  </li>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <CliCommand cmd="ls">
+  <CliCommand value="ls -a">
     <div class="usersJoined" v-html="usersJoined"></div>
   </CliCommand>
 </template>

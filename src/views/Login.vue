@@ -1,17 +1,18 @@
 <template>
   <div>
-    <div class="error" v-if="error">
-      {{ error.message }}
-    </div>
-    <form @submit.prevent="onSubmit">
-      <input type="text" v-model="username">
-      <button>Se connecter</button>
-    </form>
+    <CliCommand
+      value="login as "
+      @command="onCommand">
+      <div class="error" v-if="error">
+        {{ error.message }}
+      </div>
+    </CliCommand>
   </div>
 </template>
 
 <script>
 import store from '../store'
+import CliCommand from '../components/CliCommand'
 
 export default {
   data () {
@@ -23,7 +24,18 @@ export default {
   methods: {
     onSubmit () {
       store.userRegister(this.username)
+    },
+    onCommand (input) {
+      if (input.cmd === 'login' && input.action === 'as') {
+        store.userRegister(input.text)
+        this.error = { message: `Loggin in as "${input.text}". Please wait...` }
+      } else {
+        this.error = { message: `Unknown command "${input.cmd}". Try again.` }
+      }
     }
+  },
+  components: {
+    CliCommand
   }
 }
 </script>

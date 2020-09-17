@@ -1,18 +1,25 @@
 <template>
-  <div>
+  <div @click="onSelect" @select="onSelect">
     <p>
       <span class="url">~/Sites/gobelins/2020/chat-client </span>
       <span class="git">master*</span>
     </p>
     <p>
       <span class="arrow">❯ </span>
-      <span class="cmd">{{ cmd }} </span>
-      <span class="param1" v-if="param1">{{ param1 }} </span>
-      <span class="param2" v-if="param2">
-        <template v-if="quoted">"</template>
-        <template v-if="cursor"><em class="cursor"></em></template>{{ param2 }}<template v-if="quoted">"</template>
-      </span>
+      <span v-if="cmd" class="cmd">{{cmd}}</span>
+      <span v-if="action" class="action">&nbsp;{{action}}&nbsp;</span>
+      <span v-if="text && quoted" class="text">"</span>
+      <span v-if="text" class="text">{{text}}</span>
+      <span v-if="text && quoted" class="text">"</span>
     </p>
+    <form @submit.prevent="onSubmit">
+      <input
+        ref="input"
+        type="text"
+        :disabled="disabled"
+        v-model="command"
+        @keydown="$emit('typing')">
+    </form>
     <p>
       <slot></slot>
     </p>
@@ -21,30 +28,72 @@
 
 <script>
 export default {
+  data () {
+    return {
+      command: ''
+    }
+  },
   props: {
-    cmd: {
+    value: {
       type: String,
       required: true
     },
-    param1: {
-      type: String
+    // Disabled interaction with input
+    disabled: {
+      type: Boolean,
+      default: false
     },
-    param2: {
-      type: String
-    },
+    // Display quote on text
     quoted: {
       type: Boolean,
-      default: false
-    },
-    cursor: {
-      type: Boolean,
-      default: false
+      default: true
     }
+  },
+  methods: {
+    onSelect () {
+      if (!this.disabled) this.$refs.input.focus()
+    },
+    onSubmit () {
+      if (this.disabled) return
+      if (this.cmd) {
+        this.$emit('command', {
+          cmd: this.cmd,
+          action: this.action,
+          text: this.text
+        })
+      }
+    }
+  },
+  computed: {
+    split () {
+      return this.command.split(' ')
+    },
+    cmd () {
+      return this.split[0]
+    },
+    action () {
+      return this.split[1]
+    },
+    text () {
+      return this.split.slice(0).splice(2).join(' ')
+    }
+  },
+  created () {
+    this.command = this.value
+  },
+  mounted () {
+    this.$refs.input.focus()
   }
 }
 </script>
 
 <style lang="stylus" scoped>
+input
+  opacity 0
+  width 0
+</style>
+
+<style lang="stylus">
 @import '../theme/color.styl'
 
 .url
@@ -55,10 +104,14 @@ export default {
   color pink
 .cmd
   color green
-.param1
+.action
   color white
-.param2
+.text
   color yellow
+
+input, form
+  height 0
+  opacity 0
 
 // em.cursor
 //   display inline-block

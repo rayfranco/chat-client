@@ -1,19 +1,11 @@
 <template>
-  <div @click="focusInput">
-    <CliCommand
-      cmd="send"
-      param1="msg"
-      :param2="message"
-      :quoted="true"
-      :cursor="true">
-        <form @submit.prevent="onSubmit">
-          <input
-            v-model="message"
-            type="text"
-            ref="input">
-        </form>
+  <CliCommand
+    ref="cli"
+    value="send msg "
+    @command="onCommand"
+    @typing="onTyping">
+      <p v-if="error && error.message">{{ error.message }}</p>
     </CliCommand>
-  </div>
 </template>
 
 <script>
@@ -22,17 +14,47 @@ import CliCommand from './CliCommand'
 export default {
   data () {
     return {
-      message: '',
+      error: {},
       selection: {}
     }
   },
   methods: {
-    focusInput () {
-      this.$refs.input.focus()
+    onTyping () {
+      this.$emit('typing')
     },
-    onSubmit () {
-      this.$emit('sendMessage', this.message)
-      this.message = ''
+    // CLI Commands
+    onCommand (command) {
+      this.error = {}
+      switch (command.cmd) {
+        case 'send':
+          this.onSend(command.action, command.text)
+          break
+        case 'logout':
+        case 'exit':
+        case 'quit':
+          this.onLogout()
+          break
+        default:
+          this.onUnknownCommand(command.cmd)
+      }
+    },
+    onSend (action, text) {
+      if (action === 'msg') {
+        this.$emit('sendMessage', text)
+      } else if (action === 'cmd') {
+        this.$emit('sendMessage', '/' + text)
+      } else {
+        this.onUnknownAction(action)
+      }
+    },
+    onLogout () {
+      this.$emit('logoutRequest')
+    },
+    onUnknownCommand (cmd) {
+      this.error = { message: `Unknown command ${cmd}. Please try again` }
+    },
+    onUnknownAction (action) {
+      this.error = { message: `Unknown action ${action}. Please try again` }
     }
   },
   components: {
@@ -40,9 +62,3 @@ export default {
   }
 }
 </script>
-
-<style lang="stylus" scoped>
-form, input
-  opacity 0
-  height 0
-</style>
